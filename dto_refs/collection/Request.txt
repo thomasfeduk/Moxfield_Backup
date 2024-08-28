@@ -1,0 +1,42 @@
+Get trade binders
+curl 'https://api2.moxfield.com/v1/trade-binders' --compressed -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'x-moxfield-version: 2024.08.18.1' -H 'Authorization: Bearer X' -H 'Origin: https://www.moxfield.com' -H 'Connection: keep-alive' -H 'Referer: https://www.moxfield.com/' -H 'Cookie: _ga_X; _ga=X; ncmp.domain=moxfield.com; _sharedid=X; _sharedid_cst=X; cto_bundle=; cto_bidid=X; cto_dna_bundle=X; refresh_token=73833f39-dc5a-48a7-8d83-46954ec04eda; logged_in=true; _cc_id=X; panoramaId_expiry=X; panoramaIdType=panoIndiv' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Priority: u=0' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'TE: trailers'
+
+Get cards from No binder:
+	curl 'https://api2.moxfield.com/v1/collections/search?q=+
+	setId=
+	deckId=
+	rarity=
+	condition=
+	game=
+	cardLanguageId=
+	finish=
+	isAlter=
+	isProxy=
+	tradeBinderId=none
+	playStyle=paperDollars
+	priceMinimum=
+	priceMaximum=
+	pageNumber=1
+	pageSize=50
+	sortType=cardName
+	sortDirection=ascending' --compressed -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'x-moxfield-version: 2024.08.18.1' -H 'Authorization: Bearer X' -H 'Origin: https://www.moxfield.com' -H 'Connection: keep-alive' -H 'Referer: https://www.moxfield.com/' -H 'Cookie: _ga_X=X; _ga=X; ncmp.domain=moxfield.com; _sharedid=X; _sharedid_cst=X; cto_bundle=X; cto_bidid=X; cto_dna_bundle=X; refresh_token=X; logged_in=true; _cc_id=X; panoramaId_expiry=1725178681194; panoramaId=X; panoramaIdType=panoIndiv' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Priority: u=0' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'TE: trailers'
+
+Get cards from Simic binder:
+	curl 'https://api2.moxfield.com/v1/collections/search?q=+
+	setId=
+	deckId=
+	rarity=
+	condition=
+	game=
+	cardLanguageId=
+	finish=
+	isAlter=
+	isProxy=
+	tradeBinderId=b5PJ7
+	playStyle=paperDollars
+	priceMinimum=
+	priceMaximum=
+	pageNumber=1
+	pageSize=50
+	sortType=cardName
+	sortDirection=ascending' --compressed -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'x-moxfield-version: 2024.08.18.1' -H 'Authorization: Bearer X' -H 'Origin: https://www.moxfield.com' -H 'Connection: keep-alive' -H 'Referer: https://www.moxfield.com/' -H 'Cookie: _ga_X=X; _ga=X; ncmp.domain=moxfield.com; _sharedid=X; _sharedid_cst=X; cto_bundle=X; cto_bidid=X; cto_dna_bundle=X; refresh_token=X; logged_in=true; _cc_id=X; panoramaId_expiry=1725178681194; panoramaId=X; panoramaIdType=panoIndiv' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Priority: u=0' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'TE: trailers'

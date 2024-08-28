@@ -1,0 +1,5 @@
+__pycache__
+.idea
+MoxfieldBackups
+refresh_token.dat
+errors.log

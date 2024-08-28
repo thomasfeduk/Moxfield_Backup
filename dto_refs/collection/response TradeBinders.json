@@ -1,0 +1,34 @@
+[
+  {
+    "id": "XXX",
+    "name": "Binder name",
+    "description": "sadsadsad",
+    "publicId": "XXXXXX",
+    "visibility": "unlisted",
+    "createdAtUtc": "2024-08-20T07:14:33.087Z",
+    "lastUpdatedAtUtc": "2024-08-20T07:14:33.087Z",
+    "createdBy": {
+      "userName": "username",
+      "displayName": "displayname",
+      "badges": [
+        "level-10"
+      ]
+    }
+  },
+  {
+    "id": "XXXXX",
+    "name": "Binder2 name",
+    "description": "sadsadasdds",
+    "publicId": "XXXXXXXXXXX",
+    "visibility": "unlisted",
+    "createdAtUtc": "2024-08-19T07:41:31.91Z",
+    "lastUpdatedAtUtc": "2024-08-21T08:43:14.653Z",
+    "createdBy": {
+      "userName": "username",
+      "displayName": "dispayname",
+      "badges": [
+        "level-10"
+      ]
+    }
+  }
+]
