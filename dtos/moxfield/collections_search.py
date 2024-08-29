@@ -1,6 +1,7 @@
 from typing import List
 from dtos.base.data_types import StrPopulated, DatetimeIso8601
-from dtos.moxfield.moxfield_shared import FinishesEnum, CardDto
+from dtos.moxfield.moxfield_shared import CardDto
+from dtos.moxfield.moxfield_enums import FinishesEnum
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 
 

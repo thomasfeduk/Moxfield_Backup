@@ -13,6 +13,12 @@ T = TypeVar('T', bound='MyBaseModel')
 class MyBaseModel(BaseModel):
     @classmethod
     def load(cls: Type[T], data) -> T:
+        """Auto-detects and switches+validates loading another Basemode, json or a dict"""
+
+        # If it's an instance of Basemodel, we json dump it
+        if isinstance(data, BaseModel):
+            data = data.json()
+
         # Try to JSON decode
         if isinstance(data, str):
             try:
