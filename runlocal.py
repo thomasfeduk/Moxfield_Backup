@@ -3,6 +3,9 @@ import os
 import config
 
 if __name__ == "__main__":
+    if config.MoxFieldErrors.FRIENDLY_ERROR_MSG:
+        os.environ['FRIENDLY_ERRORS'] = '1'
+
     # moxfield_api = MoxfieldAPI()
     # binders = moxfield_api.get_binders()
     # moxfield_api.write_collection(binders)

@@ -31,6 +31,7 @@ class MoxfieldClient:
         response = requests.post(f"{self.base_url}/{endpoint}",
                                  headers=headers, json={'refresh_token': self.refresh_token})
         response.raise_for_status()  # Ensure the refresh call was successful
+        refresh_token_response = RefreshTokenResponseDto.load(response.json())
         new_token = response.json().get('access_token')
         if new_token:
             self.api_key = new_token
@@ -39,7 +40,7 @@ class MoxfieldClient:
         else:
             print("Failed to refresh token.")
             raise Exception("Unable to refresh token; please reauthenticate.")
-        return UserBaseInfo.load(response.json())
+        return UserBaseInfo.load(refresh_token_response)
 
     def get_collections(self) -> CollectionsSearchDTO:
         """Fetch collections data and return as DTO."""

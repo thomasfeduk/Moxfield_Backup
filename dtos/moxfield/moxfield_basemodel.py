@@ -18,6 +18,7 @@ class MoxFieldBaseModel(MyBaseModel):
 
     @classmethod
     def load(cls: Type[T], data) -> MyBaseModel | T:
+        cls.set_friendly_errors(os.getenv('FRIENDLY_ERRORS') == '1')
         try:
             return super().load(data)
         except Exception as e:
@@ -25,7 +26,7 @@ class MoxFieldBaseModel(MyBaseModel):
             log.error(config.MoxFieldErrors.ERROR_MSG, exc_info=e)
 
             # Handle user-friendly error message in local mode
-            if config.MoxFieldErrors.API_FRIENDLY_ERRORS:
+            if cls._friendly_errors:
                 display_friendly_error(config.MoxFieldErrors.FRIENDLY_ERROR_MSG)
                 # Exit since we are in pretty error mode and dont want to print stack trace
                 sys.exit(1)
