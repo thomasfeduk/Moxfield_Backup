@@ -1,4 +1,4 @@
-import requests
+from clients.base_client import Requests
 from cerberus import Validator
 from includes.logger import get_logger
 import config
@@ -45,9 +45,8 @@ class MoxfieldClient:
         payload = json.dumps({
             "ignoreCookie": False
         })
-        pvdd(headers)
 
-        response = requests.post(f"{config.MoxFieldAPI.BASE_URL}/{endpoint}", headers=headers, data=payload)
+        response = Requests.post(f"{config.MoxFieldAPI.BASE_URL}/{endpoint}", headers=headers, data=payload)
         response.raise_for_status()
         refresh_token_response = RefreshTokenResponseDto.load(response.json())
         pvdd(refresh_token_response)
