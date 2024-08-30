@@ -15,5 +15,4 @@ class MoxFieldErrors:
 
 @dataclass(frozen=True)
 class MoxFieldAPI:
-    BASE_URL = "https://api.example.com"
-    VERSION = "v1"
+    BASE_URL = "https://api2.moxfield.com"
