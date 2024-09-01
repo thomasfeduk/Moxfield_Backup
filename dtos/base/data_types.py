@@ -1,16 +1,29 @@
-from pydantic import constr
+from collections.abc import Callable
+from datetime import datetime
+from typing import Annotated
 
-# New stricter constraint type aliases
-StrPopulated = constr(min_length=1, regex=r'\S+')
-DatetimeIso8601 = constr(regex=r"^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2}(\.\d{1,6})?)?)?(Z|[+-]\d{2}(:?\d{2})?)?)?)?)?$")
-DateYmd = constr(regex=r'^\d{4}-\d{2}-\d{2}$')
+from pydantic import StringConstraints
+from pydantic_core import core_schema, CoreSchema
 
-# Examples to match for DatetimeIso8601
-# [
-#     "2024-09-01T12:30:45Z",    # Extended format with time and 'Z' timezone
-#     "2024-09-01T12:30:45+02:00", # Extended format with time and positive offset
-#     "20240901T123045Z",        # Basic format with time and 'Z' timezone
-#     "20240901T123045+0200",    # Basic format with time and positive offset
-#     "2024-09-01",              # Extended format date only
-#     "20240901"                 # Basic format date only
-# ]
+# Define your custom types using Annotated
+StrPopulated = Annotated[str, StringConstraints(min_length=1, pattern=r'\S+')]
+DateYmd = Annotated[str, StringConstraints(pattern=r'^\d{4}-\d{2}-\d{2}$')]
+
+
+class DatetimeIso8601:
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type: type, handler: Callable) -> CoreSchema:
+        # Define a schema that checks the regex and then parses the datetime
+        return core_schema.with_info_after_validator_function(
+            cls.parse_datetime, core_schema.str_schema(pattern=r"^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2}(\.\d{1,6})?)?)?(Z|[+-]\d{2}(:?\d{2})?)?)?)?)?$")
+        )
+
+    @classmethod
+    def parse_datetime(cls, value: str, info: core_schema.ValidationInfo) -> datetime:
+        if isinstance(value, datetime):
+            return value
+        try:
+            # Convert the ISO 8601 string to a datetime object
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 datetime format: {value}")
