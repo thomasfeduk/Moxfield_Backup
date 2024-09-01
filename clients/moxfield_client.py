@@ -79,7 +79,7 @@ class MoxfieldClient:
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JsonDto:
         headers = {
-            'Authorization': f'Bearer {self.}',
+            'Authorization': f'Bearer {self._access_token}',
             'Cookie': f'refresh_token={self._refresh_token}; logged_in=true'
         }
         headers.update(self.headers)

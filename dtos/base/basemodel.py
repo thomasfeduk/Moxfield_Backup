@@ -6,20 +6,19 @@ from pydantic import BaseModel, ValidationError, RootModel
 
 log = get_logger()
 
-T_MyBaseModel = TypeVar('T_MyBaseModel', bound='MyBaseModel')
-T_MyRootModel = TypeVar('T_MyRootModel', bound='MyRootModel')
+T = TypeVar('T', bound='LoadableMixin')
 
 
-class LoadModel:
+class LoadModel(Generic[T]):
     @classmethod
-    def load(cls: Type[T_MyBaseModel], data) -> T_MyBaseModel:
-        """Auto-detects and switches+validates loading another BaseModel, json, or a dict"""
+    def load(cls: Type[T], data) -> T:
+        """Auto-detects and switches+validates loading another BaseModel, JSON, or a dict"""
 
-        # If it's an instance of BaseModel, we json dump it
+        # If it's an instance of BaseModel, convert it to JSON string
         if isinstance(data, BaseModel):
             data = data.json()
 
-        # Try to JSON decode
+        # Try to decode a JSON string
         if isinstance(data, str):
             try:
                 data = json.loads(data)
@@ -41,14 +40,19 @@ class LoadModel:
             raise
 
 
-class MyBaseModel(LoadModel, BaseModel):
+class MyBaseModel(BaseModel, LoadModel['MyBaseModel']):
     class Config:
         # Enforce strict types for better debugging
         strict_types = True
 
 
-class MyRootModel(Generic[T_MyRootModel], LoadModel, RootModel[T_MyRootModel]):
-    # Optional: Override methods from RootModel if needed
+T_MyRootModel = TypeVar('T_MyRootModel')
+
+
+class MyRootModel(RootModel[T_MyRootModel], LoadModel['MyRootModel']):
+    # Add custom methods or properties here if needed
+
+    # Example: Override the dict method to match RootModel behavior
     def dict(self, *args, **kwargs) -> T_MyRootModel:
         # Use the root property from RootModel to access the data
         return self.root
