@@ -18,6 +18,7 @@ class AuthFailure(Exception):
 
 class MoxfieldClient:
     def __init__(self, *, refresh_token: str):
+        self._access_token = None
         self._refresh_token = self._validate_token(refresh_token)
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
@@ -59,6 +60,8 @@ class MoxfieldClient:
         response.raise_for_status()
         refresh_token_response = RefreshTokenResponseDto.load(response.json())
 
+        # Update/store the refresh and access tokens
+        self._access_token = refresh_token_response.access_token
         self._update_stored_refresh_token(refresh_token_response)
         return UserBaseInfo.load(refresh_token_response)
 
@@ -74,19 +77,24 @@ class MoxfieldClient:
         response = self._make_request(endpoint)
         return TradeBinderDto.load(response)
 
-    def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None, retry: bool = True) -> JsonDto:
+    def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JsonDto:
+        headers = {
+            'Authorization': f'Bearer {self.}',
+            'Cookie': f'refresh_token={self._refresh_token}; logged_in=true'
+        }
+        headers.update(self.headers)
+        pvdd(headers)
         try:
             response = Requests.request(method, f"{config.MoxFieldAPI.BASE_URL}{endpoint}",
-                                        headers=self.headers, params=params, json=data)
+                                        headers=headers, params=params, json=data, debug=True)
             response.raise_for_status()
-            return response.json()
         except Requests.exceptions.HTTPError as e:
             print(f"HTTP error occurred: {e} - Status Code: {response.status_code}")
             raise
         except Requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
             raise
-        return JsonDto.lo
+        return JsonDto.load(response.json())
 
     @classmethod
     def _update_stored_refresh_token(cls, refresh_token_response: RefreshTokenResponseDto):
