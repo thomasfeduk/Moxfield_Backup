@@ -36,6 +36,15 @@ class MoxfieldClient:
         return refresh_token
 
     def authenticate(self) -> UserBaseInfo:
+        with open('dto_refs/auth/response token.json', 'r') as file:
+            response_file = file.read()
+
+        refresh_token_response = RefreshTokenResponseDto.load(response_file)
+
+        pvdd(refresh_token_response)
+
+
+
         """Refresh the authentication token and update user info."""
         endpoint = "/v1/account/token/refresh"
         headers = {}
