@@ -9,7 +9,7 @@ def auth():
     with open('refresh_token.dat', 'r') as token_file:
         token = token_file.read()
     client = MoxfieldClient(refresh_token=token)
-    client.authenticate()
+
     die('end of runlocal')
 
 

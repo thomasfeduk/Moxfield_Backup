@@ -1,11 +1,11 @@
-import os
-from typing import TypeVar, Type
-import sys
 import config
+import os
+import sys
+from typing import TypeVar, Type
+from includes.logger import get_logger, setup_logger
 from pydantic import PrivateAttr
 from includes.utils import display_friendly_error
 from dtos.base.basemodel import MyBaseModel
-from includes.logger import get_logger, setup_logger
 
 log = get_logger()
 

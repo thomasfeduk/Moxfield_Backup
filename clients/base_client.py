@@ -2,10 +2,14 @@ import requests as requests_orig
 import sys
 
 from requests import Response
+from requests import exceptions as requests_exceptions
 from typing import Any
 
 
 class Requests:
+    # Expose the exceptions module from requests
+    exceptions = requests_exceptions
+
     def __init__(self) -> None:
         pass
 

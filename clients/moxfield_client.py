@@ -4,10 +4,16 @@ from includes.logger import get_logger
 import config
 from debug import *
 
+from dtos.requests.requests_types import JsonDto
 from dtos.moxfield.moxfield_shared import UserBaseInfo
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
+from dtos.moxfield.moxfield_trade_binders import TradeBinderDto
 
 log = get_logger()
+
+
+class AuthFailure(Exception):
+    pass
 
 
 class MoxfieldClient:
@@ -27,6 +33,9 @@ class MoxfieldClient:
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Site': 'same-site'
         }
+
+        # Auto authenticate to grab a fresh refresh token when initlizing the client
+        self.authenticate()
 
     def authenticate(self) -> UserBaseInfo:
         """Refresh the authentication token and update user info."""
@@ -53,6 +62,32 @@ class MoxfieldClient:
         self._update_stored_refresh_token(refresh_token_response)
         return UserBaseInfo.load(refresh_token_response)
 
+    # def get_collections(self) -> CollectionsSearchDTO:
+    #     """Fetch collections data and return as DTO."""
+    #     endpoint = "collections"
+    #     response = self._make_request(endpoint)
+    #     return CollectionsSearchDTO(**response)
+
+    def get_trade_binders(self) -> TradeBinderDto:
+        """Fetch collections data and return as DTO."""
+        endpoint = "/v1/trade-binders"
+        response = self._make_request(endpoint)
+        return TradeBinderDto.load(response)
+
+    def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None, retry: bool = True) -> JsonDto:
+        try:
+            response = Requests.request(method, f"{config.MoxFieldAPI.BASE_URL}{endpoint}",
+                                        headers=self.headers, params=params, json=data)
+            response.raise_for_status()
+            return response.json()
+        except Requests.exceptions.HTTPError as e:
+            print(f"HTTP error occurred: {e} - Status Code: {response.status_code}")
+            raise
+        except Requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+            raise
+        return JsonDto.lo
+
     @classmethod
     def _update_stored_refresh_token(cls, refresh_token_response: RefreshTokenResponseDto):
         if not isinstance(refresh_token_response, RefreshTokenResponseDto):
@@ -69,30 +104,3 @@ class MoxfieldClient:
         if not v.validate({'token': refresh_token}):
             raise ValueError("refresh_token must be a non-empty string containing non-whitespace characters")
         return refresh_token
-
-    # def get_collections(self) -> CollectionsSearchDTO:
-    #     """Fetch collections data and return as DTO."""
-    #     endpoint = "collections"
-    #     response = self._make_request(endpoint)
-    #     return CollectionsSearchDTO(**response)
-    #
-    # def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None, retry: bool = True):
-    #     """Internal method to make HTTP requests with error handling for 401 Unauthorized."""
-    #     url = f"{self.base_url}/{endpoint}"
-    #     headers = {'Cookie': f'refresh_token={self.refresh_token}; logged_in=true;'}
-    #     headers.update(self.headers)
-    #
-    #     try:
-    #         response = requests.request(method, url, headers=self.headers, params=params, json=data)
-    #         if response.status_code == 401 and retry:
-    #             # Handle 401 Unauthorized: refresh the token and retry once
-    #             self._refresh_token()
-    #             return self._make_request(endpoint, method, params, data, retry=False)
-    #         response.raise_for_status()
-    #         # return response.json()
-    #     except requests.exceptions.HTTPError as e:
-    #         print(f"HTTP error occurred: {e} - Status Code: {response.status_code}")
-    #         raise
-    #     except requests.exceptions.RequestException as e:
-    #         print(f"An error occurred: {e}")
-    #         raise

@@ -11,7 +11,6 @@ StrPopulated = Annotated[str, StringConstraints(min_length=1, pattern=r'\S+')]
 DateYmd = Annotated[str, StringConstraints(pattern=r'^\d{4}-\d{2}-\d{2}$')]
 
 
-
 class DatetimeIso8601:
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type: type, handler: Callable) -> CoreSchema:
