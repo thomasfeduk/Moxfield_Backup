@@ -37,5 +37,3 @@ class MoxFieldBaseModel(MyBaseModel):
     def set_friendly_errors(cls, value: bool):
         cls._friendly_errors = value
         setup_logger(local_mode=value)
-
-

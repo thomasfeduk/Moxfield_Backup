@@ -11,6 +11,10 @@ T = TypeVar('T', bound='MyBaseModel')
 
 
 class MyBaseModel(BaseModel):
+    class Config:
+        # Enforce strict types for better debugging
+        strict_types = True
+
     @classmethod
     def load(cls: Type[T], data) -> T:
         """Auto-detects and switches+validates loading another Basemode, json or a dict"""

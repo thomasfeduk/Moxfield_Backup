@@ -28,23 +28,7 @@ class MoxfieldClient:
             'Sec-Fetch-Site': 'same-site'
         }
 
-    def _validate_token(self, refresh_token: str) -> str:
-        schema = {'token': {'type': 'string', 'minlength': 1, 'regex': r'\S+'}}
-        v = Validator(schema)
-        if not v.validate({'token': refresh_token}):
-            raise ValueError("refresh_token must be a non-empty string containing non-whitespace characters")
-        return refresh_token
-
     def authenticate(self) -> UserBaseInfo:
-        with open('dto_refs/auth/response token.json', 'r') as file:
-            response_file = file.read()
-
-        refresh_token_response = RefreshTokenResponseDto.load(response_file)
-
-        pvdd(refresh_token_response)
-
-
-
         """Refresh the authentication token and update user info."""
         endpoint = "/v1/account/token/refresh"
         headers = {}
@@ -56,19 +40,35 @@ class MoxfieldClient:
         })
 
         response = Requests.post(f"{config.MoxFieldAPI.BASE_URL}/{endpoint}", headers=headers, data=payload)
+
+        # If we get an invalid token error, prompt the user to enter a fresh token error
+        # Yes moxfield uses 400 instead of 401 for failed token auth
+        if response.status_code == 400 and "Invalid refresh token" in response.text:
+            pvdd("Your token expired enter a new one")
+
+        # Throw exception if not 2xx, 400 is already handled above
         response.raise_for_status()
         refresh_token_response = RefreshTokenResponseDto.load(response.json())
-        pvdd(refresh_token_response)
 
-        new_token = response.json().get('access_token')
-        if new_token:
-            self.api_key = new_token
-            self.headers['Authorization'] = f'Bearer {self.api_key}'
-            print("Token refreshed successfully.")
-        else:
-            print("Failed to refresh token.")
-            raise Exception("Unable to refresh token; please reauthenticate.")
+        self._update_stored_refresh_token(refresh_token_response)
         return UserBaseInfo.load(refresh_token_response)
+
+    @classmethod
+    def _update_stored_refresh_token(cls, refresh_token_response: RefreshTokenResponseDto):
+        if not isinstance(refresh_token_response, RefreshTokenResponseDto):
+            raise ValueError("refresh_token must be an instance of type RefreshTokenResponseDto")
+
+        with open(f'refresh_token.dat', 'w') as file:
+            file.write(refresh_token_response.refresh_token)
+            log.info('Updated refresh token.')
+
+    @classmethod
+    def _validate_token(cls, refresh_token: str) -> str:
+        schema = {'token': {'type': 'string', 'minlength': 1, 'regex': r'\S+'}}
+        v = Validator(schema)
+        if not v.validate({'token': refresh_token}):
+            raise ValueError("refresh_token must be a non-empty string containing non-whitespace characters")
+        return refresh_token
 
     # def get_collections(self) -> CollectionsSearchDTO:
     #     """Fetch collections data and return as DTO."""

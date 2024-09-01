@@ -3,6 +3,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Errors:
     LOG_FILE = 'errors.log'  # None if no local logging
+    LOG_LEVEL = 'DEBUG'  # ERROR | WARNING | INFO | DEBUG
 
 
 @dataclass(frozen=True)

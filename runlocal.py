@@ -10,7 +10,7 @@ def auth():
         token = token_file.read()
     client = MoxfieldClient(refresh_token=token)
     client.authenticate()
-    die('sadsaasd')
+    die('end of runlocal')
 
 
 if __name__ == "__main__":
