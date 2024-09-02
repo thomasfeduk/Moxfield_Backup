@@ -6,12 +6,14 @@ from pydantic import BaseModel, ValidationError, RootModel
 
 log = get_logger()
 
-T = TypeVar('T', bound='LoadableMixin')
+T_LoadModel = TypeVar('T', bound='LoadModel')
+T_MyBaseModel = TypeVar('T', bound='MyBaseModel')
+T_MyRootModel = TypeVar('T', bound='MyRootModel')
 
 
-class LoadModel(Generic[T]):
+class LoadModel(Generic[T_LoadModel]):
     @classmethod
-    def load(cls: Type[T], data) -> T:
+    def load(cls: Type[T_LoadModel], data) -> T_LoadModel | T_MyBaseModel | T_MyRootModel:
         """Auto-detects and switches+validates loading another BaseModel, JSON, or a dict"""
 
         # If it's an instance of BaseModel, convert it to JSON string
@@ -44,9 +46,6 @@ class MyBaseModel(BaseModel, LoadModel['MyBaseModel']):
     class Config:
         # Enforce strict types for better debugging
         strict_types = True
-
-
-T_MyRootModel = TypeVar('T_MyRootModel')
 
 
 class MyRootModel(RootModel[T_MyRootModel], LoadModel['MyRootModel']):
