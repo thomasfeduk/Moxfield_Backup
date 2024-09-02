@@ -1,23 +1,23 @@
 import config
 import os
 import sys
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Generic
 from includes.logger import get_logger, setup_logger
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, RootModel
 from includes.utils import display_friendly_error
 from dtos.base.basemodel import MyBaseModel
 
 log = get_logger()
 
 # Allows preserving autocomplete via the load method return
-T = TypeVar('T', bound='MoxFieldBaseModel')
+T_Mox = TypeVar('T_Mox', bound='MoxFieldBaseModel')
 
 
 class MoxFieldBaseModel(MyBaseModel):
     _friendly_errors: bool = PrivateAttr(default=False)
 
     @classmethod
-    def load(cls: Type[T], data) -> MyBaseModel | T:
+    def load(cls: Type[T_Mox], data) -> MyBaseModel | T_Mox:
         cls.set_friendly_errors(os.getenv('FRIENDLY_ERRORS') == '1')
         try:
             return super().load(data)
@@ -37,3 +37,26 @@ class MoxFieldBaseModel(MyBaseModel):
     def set_friendly_errors(cls, value: bool):
         cls._friendly_errors = value
         setup_logger(local_mode=value)
+
+
+T_Root = TypeVar('T_Root')  # For use in the root model
+
+
+# Create a generic root model that extends MoxFieldBaseModel and RootModel
+class MyMoxRootModel(RootModel[T_Root], MoxFieldBaseModel, Generic[T_Root]):
+    @classmethod
+    def load(cls: Type[T_Mox], data) -> T_Mox:
+        """Override load method to include custom error handling logic."""
+        cls.set_friendly_errors(os.getenv('FRIENDLY_ERRORS') == '1')
+        try:
+            # Call the load method from MoxFieldBaseModel
+            return super().load(data)
+        except Exception as e:
+            # Handle errors similarly to MoxFieldBaseModel
+            log.error("Error occurred while loading data in MyMoxRootModel.", exc_info=e)
+
+            if cls._friendly_errors:
+                # Display a friendly error message
+                print("Friendly error message from MyMoxRootModel.")
+                sys.exit(1)
+            raise

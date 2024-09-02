@@ -3,7 +3,7 @@ from typing import List
 from pydantic import RootModel
 
 from dtos.base.data_types import StrPopulated, DatetimeIso8601
-from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
+from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel, MyMoxRootModel
 
 
 class CreatedByDto(MoxFieldBaseModel):
@@ -23,5 +23,5 @@ class TradeBinderDto(MoxFieldBaseModel):
     createdBy: CreatedByDto
 
 
-class TradeBindersResponseDto(RootModel[List[TradeBinderDto]]):
+class TradeBindersResponseDto(MyMoxRootModel[List[TradeBinderDto]]):
     pass

@@ -1,8 +1,10 @@
 import json
-from typing import TypeVar, Type
+from typing import TypeVar, Type, get_args
 
 from includes.logger import get_logger
 from pydantic import BaseModel, ValidationError
+
+from includes.types import JSONType
 
 log = get_logger()
 
@@ -32,14 +34,21 @@ class MyBaseModel(BaseModel):
                 log.error("Unexpected error occurred while parsing JSON.", exc_info=e)
                 raise
 
-        # Ensure the input is a dictionary
-        if not isinstance(data, dict):
-            log.error("Input data must be a dictionary or a valid JSON string.", exc_info=True)
-            raise TypeError("Input data must be a dictionary or a valid JSON string.")
+        # Ensure the input is a valid JSON-compatible type
+        json_types = get_args(JSONType)  # Retrieve the component types from JSONType
 
-        # Validate the input data using Pydantic
-        try:
-            return cls(**data)
-        except ValidationError as e:
-            log.error("Validation error occurred.", exc_info=e)
-            raise
+        # Check if the data is one of the acceptable types
+        if not any(isinstance(data, t if t is not type(None) else type(None)) for t in json_types):
+            log.error("Input data must be a valid JSON-compatible type.", exc_info=True)
+            raise TypeError("Input data must be a valid JSON-compatible type.")
+
+        # Determine how to instantiate the model
+        if isinstance(data, dict):
+            try:
+                # Attempt to unpack the dictionary into the model's fields
+                return cls(**data)
+            except ValidationError as e:
+                log.error("Validation error occurred while unpacking data into model fields.", exc_info=e)
+                raise
+        # Use root instantiation for all other JSON-compatible types
+        return cls(root=data)  # Use root keyword for RootModel instantiation
