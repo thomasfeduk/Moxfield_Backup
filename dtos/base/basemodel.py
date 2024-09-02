@@ -6,9 +6,9 @@ from pydantic import BaseModel, ValidationError, RootModel
 
 log = get_logger()
 
-T_LoadModel = TypeVar('T', bound='LoadModel')
-T_MyBaseModel = TypeVar('T', bound='MyBaseModel')
-T_MyRootModel = TypeVar('T', bound='MyRootModel')
+T_LoadModel = TypeVar('T_LoadModel', bound='LoadModel')
+T_MyBaseModel = TypeVar('T_MyBaseModel', bound='MyBaseModel')
+T_MyRootModel = TypeVar('T_MyRootModel', bound='MyRootModel')
 
 
 class LoadModel(Generic[T_LoadModel]):
