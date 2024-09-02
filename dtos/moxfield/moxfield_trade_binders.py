@@ -1,9 +1,8 @@
 from typing import List
-
-from pydantic import RootModel
-
 from dtos.base.data_types import StrPopulated, DatetimeIso8601
-from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel, MoxFieldRootModel
+from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel, MyMoxRootModel
+from includes import common
+from includes.common import RestrictedCollection
 
 
 class CreatedByDto(MoxFieldBaseModel):
@@ -23,5 +22,28 @@ class TradeBinderDto(MoxFieldBaseModel):
     createdBy: CreatedByDto
 
 
-class TradeBindersResponseDto(MoxFieldRootModel[List[TradeBinderDto]]):
+class TradeBindersResponseDto(MyMoxRootModel[List[TradeBinderDto]]):
     pass
+
+
+class TradeBindersCollection(common.RestrictedCollection):
+    def __init__(self, items: list = None):
+        super().__init__(items)
+
+    @property
+    def expected_type(self):
+        return TradeBinderDto
+
+    def __iter__(self) -> TradeBinderDto:
+        return super().__iter__()
+
+    def __add__(self, value: RestrictedCollection) -> 'TradeBindersCollection':
+        return super().__add__(value)
+
+    # Override get item so we can typehint the explicit type
+    def __getitem__(self, index) -> TradeBinderDto:
+        return super().__getitem__(index)
+
+    # Override get item so we can typehint the explicit type
+    def __next__(self) -> TradeBinderDto:
+        return super().__next__()

@@ -1,10 +1,10 @@
 import json
-from typing import TypeVar, Type, get_args, Generic
+from typing import TypeVar, Type, get_args, List, Generic
 
 from typing_extensions import get_origin
 
 from includes.logger import get_logger
-from pydantic import BaseModel, ValidationError, RootModel
+from pydantic import BaseModel, ValidationError, Field
 
 from includes.types import JSONType
 
@@ -57,11 +57,3 @@ class MyBaseModel(BaseModel):
                 raise
         # Use root instantiation for all other JSON-compatible types
         return cls(root=data)  # Use root keyword for RootModel instantiation
-
-
-T_JSONType = TypeVar('T_JSONType', bound=JSONType)
-
-
-# Create a generic root model that extends MoxFieldBaseModel and RootModel
-class MyRootModel(RootModel[T_JSONType], MyBaseModel, Generic[T_JSONType]):
-    pass

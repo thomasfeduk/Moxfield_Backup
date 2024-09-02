@@ -7,7 +7,7 @@ from debug import *
 
 from dtos.moxfield.moxfield_shared import UserBaseInfo
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
-from dtos.moxfield.moxfield_trade_binders import TradeBinderDto, TradeBindersResponseDto
+from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection, TradeBinderDto
 
 log = get_logger()
 
@@ -71,11 +71,13 @@ class MoxfieldClient:
     #     response = self._make_request(endpoint)
     #     return CollectionsSearchDTO(**response)
 
-    def get_trade_binders(self) -> TradeBindersResponseDto:
+    def get_trade_binders(self) -> TradeBindersCollection:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/trade-binders"
         response = self._make_request(endpoint)
-        return TradeBindersResponseDto.load(response)
+        # Confirm response validity
+        TradeBindersResponseDto.load(response)
+        return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
         headers = {
