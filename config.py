@@ -3,6 +3,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Errors:
     LOG_FILE = 'errors.log'  # None if no local logging
+    LOG_LEVEL = 'DEBUG'  # ERROR | WARNING | INFO | DEBUG
 
 
 @dataclass(frozen=True)
@@ -15,5 +16,4 @@ class MoxFieldErrors:
 
 @dataclass(frozen=True)
 class MoxFieldAPI:
-    BASE_URL = "https://api.example.com"
-    VERSION = "v1"
+    BASE_URL = "https://api2.moxfield.com"

@@ -1,19 +1,20 @@
-from typing import List
+from typing import List, Literal
 
-from debug import Enum
+from pydantic import StrictBool, StrictInt
+
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 from dtos.base.data_types import DatetimeIso8601, StrPopulated, DateYmd
+from dtos.moxfield.moxfield_enums import FinishesEnum, LegalitiesEnum
 
 
-class FinishesEnum(str, Enum):
-    value1 = "foil"
-    value2 = "nonFoil"
-    value3 = "etched"
-
-
-class LegalitiesEnum(str, Enum):
-    value1 = "legal"
-    value2 = "not_legal"
+class UserBaseInfo(MoxFieldBaseModel):
+    user_name: StrPopulated
+    email_address: StrPopulated
+    is_email_confirmed: StrictBool
+    permissions: List[StrPopulated]
+    user_id: StrPopulated
+    mature_content_pref: StrPopulated
+    date_of_birth: DateYmd
 
 
 class LegalitiesDto(MoxFieldBaseModel):

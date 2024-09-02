@@ -1,17 +1,47 @@
 from dtos.moxfield.collections_search import CollectionSearchResponseDto
 import os
 import config
+from debug import *
+
+from clients.moxfield_client import MoxfieldClient
+
+
+def binders():
+
+    binder_collection = client.get_trade_binders()
+    for binder in binder_collection:
+        print(binder.description)
+
+    die('end of runlocal')
+
 
 if __name__ == "__main__":
-    if config.MoxFieldErrors.FRIENDLY_ERROR_MSG:
-        os.environ['FRIENDLY_ERRORS'] = '1'
+    # if config.MoxFieldErrors.FRIENDLY_ERROR_MSG:
+    #     os.environ['FRIENDLY_ERRORS'] = '1'
+
+
+    with open('refresh_token.dat', 'r') as token_file:
+        token = token_file.read()
+
+    client = MoxfieldClient(refresh_token=token)
+
+
+    binders()
+
+
 
     # moxfield_api = MoxfieldAPI()
     # binders = moxfield_api.get_binders()
     # moxfield_api.write_collection(binders)
     # moxfield_api.get_collection()
 
-    with open('dto_refs/collection/response CollectionsSearch.json', 'r') as file:
+
+
+
+    die('runlocalpy')
+
+
+    with open('dto_refs/collection/response CollectionsSearch.json', 'r') as fidle:
         data = file.read()
 
     response = CollectionSearchResponseDto.load(data)

@@ -160,7 +160,9 @@ def _strip_proprules_recursively(data):
                 except Exception:
                     pass
                 try:
-                    data_stripped_new[i] = _strip_proprules_recursively(item)
+                    # Temp Removed as it was adding new items based on the key. ie [1] = "nameOfFirstItemKey"
+                    # data_stripped_new[i] = _strip_proprules_recursively(item)
+                    ...
                 except Exception:
                     pass
                 i += 1

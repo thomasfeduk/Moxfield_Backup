@@ -1,9 +1,10 @@
 import logging
+import config
 
 log = None
 
 
-def setup_logger(local_mode: bool = False) -> None:
+def setup_logger(local_mode: bool = False) -> log:
     global log
     if log is not None:
         # Clear existing handlers to allow reconfiguration
@@ -11,6 +12,7 @@ def setup_logger(local_mode: bool = False) -> None:
 
     log = logging.getLogger(__name__)
     log.setLevel(logging.ERROR)
+    log.setLevel(getattr(logging, config.Errors.LOG_LEVEL, logging.ERROR))  # Default to ERROR if LOG_LEVEL is invalid
 
     # Create a file handler for logging errors to a file
     file_handler = logging.FileHandler('../errors.log')
@@ -30,6 +32,7 @@ def setup_logger(local_mode: bool = False) -> None:
     # Avoid duplicate logs by disabling propagation
     log.propagate = False
 
+    return log
 
 def get_logger() -> log:
     """Ensures the logger is set up before returning it."""
