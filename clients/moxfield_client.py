@@ -1,13 +1,13 @@
+import config
+from includes.types import JSONType
 from clients.base_client import Requests
 from cerberus import Validator
 from includes.logger import get_logger
-import config
 from debug import *
 
-from dtos.requests.requests_types import JsonDto
 from dtos.moxfield.moxfield_shared import UserBaseInfo
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
-from dtos.moxfield.moxfield_trade_binders import TradeBinderDto
+from dtos.moxfield.moxfield_trade_binders import TradeBinderDto, TradeBindersResponseDto
 
 log = get_logger()
 
@@ -71,13 +71,13 @@ class MoxfieldClient:
     #     response = self._make_request(endpoint)
     #     return CollectionsSearchDTO(**response)
 
-    def get_trade_binders(self) -> TradeBinderDto:
+    def get_trade_binders(self) -> TradeBindersResponseDto:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/trade-binders"
         response = self._make_request(endpoint)
-        return TradeBinderDto.load(response)
+        return TradeBindersResponseDto.load(response)
 
-    def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JsonDto:
+    def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
         headers = {
             'Authorization': f'Bearer {self._access_token}',
             'Cookie': f'refresh_token={self._refresh_token}; logged_in=true'
@@ -93,9 +93,7 @@ class MoxfieldClient:
         except Requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
             raise
-        pvd(response.json())
-        pvdd(JsonDto.load(response.json()))
-        return JsonDto.load(response.json())
+        return response.json()
 
     @classmethod
     def _update_stored_refresh_token(cls, refresh_token_response: RefreshTokenResponseDto):

@@ -1,18 +1,8 @@
 from typing import List, Literal
-from pydantic import StrictBool, StrictInt, BaseModel
+from pydantic import StrictBool, StrictInt
 from dtos.base.data_types import StrPopulated, DatetimeIso8601, DateYmd
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
-from debug import *
 
-class TestObj(BaseModel):
-    access_token: StrPopulated
-    refresh_token: StrPopulated
-
-# var = '{"access_token": "asdasd", "refresh_token": "aaaaa"}'
-var = {"access_token": "asdasd", "refresh_token": "aaaaa"}
-
-output = TestObj.parse_raw(var)
-pvdd(output)
 
 class RefreshTokenResponseDto(MoxFieldBaseModel):
     access_token: StrPopulated

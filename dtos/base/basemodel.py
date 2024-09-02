@@ -1,29 +1,29 @@
 import json
-from typing import TypeVar, Type, Generic, Dict, Any
+from typing import TypeVar, Type
 
-from debug import pvdd
 from includes.logger import get_logger
-from pydantic import BaseModel, ValidationError, RootModel
-
-from includes.utils import is_json_compatible
+from pydantic import BaseModel, ValidationError
 
 log = get_logger()
 
-T_LoadModel = TypeVar('T_LoadModel', bound='LoadModel')
-T_MyBaseModel = TypeVar('T_MyBaseModel', bound='MyBaseModel')
-T_MyRootModel = TypeVar('T_MyRootModel', bound='MyRootModel')
+# Allows preserving autocomplete via the load method return
+T = TypeVar('T', bound='MyBaseModel')
 
 
-class LoadModel(Generic[T_LoadModel]):
+class MyBaseModel(BaseModel):
+    class Config:
+        # Enforce strict types for better debugging
+        strict_types = True
+
     @classmethod
-    def load(cls: Type[T_LoadModel], data) -> T_LoadModel | T_MyBaseModel | T_MyRootModel:
-        """Auto-detects and switches+validates loading another BaseModel, JSON, or a dict"""
+    def load(cls: Type[T], data) -> T:
+        """Auto-detects and switches+validates loading another Basemode, json or a dict"""
 
-        # If it's an instance of BaseModel, convert it to JSON string
+        # If it's an instance of Basemodel, we json dump it
         if isinstance(data, BaseModel):
             data = data.json()
 
-        # Try to decode a JSON string
+        # Try to JSON decode
         if isinstance(data, str):
             try:
                 data = json.loads(data)
@@ -33,9 +33,9 @@ class LoadModel(Generic[T_LoadModel]):
                 raise
 
         # Ensure the input is a dictionary
-        if not isinstance(data, dict) and not is_json_compatible(data):
+        if not isinstance(data, dict):
             log.error("Input data must be a dictionary or a valid JSON string.", exc_info=True)
-            raise TypeError("Input data must be a str, int, float, bool, None, dictionary or a valid JSON string.")
+            raise TypeError("Input data must be a dictionary or a valid JSON string.")
 
         # Validate the input data using Pydantic
         try:
@@ -43,18 +43,3 @@ class LoadModel(Generic[T_LoadModel]):
         except ValidationError as e:
             log.error("Validation error occurred.", exc_info=e)
             raise
-
-
-class MyBaseModel(BaseModel, LoadModel['MyBaseModel']):
-    class Config:
-        # Enforce strict types for better debugging
-        strict_types = True
-
-
-class MyRootModel(RootModel[T_MyRootModel], LoadModel['MyRootModel']):
-    # Add custom methods or properties here if needed
-
-    # Example: Override the dict method to match RootModel behavior
-    def dict(self, *args, **kwargs) -> T_MyRootModel:
-        # Use the root property from RootModel to access the data
-        return self.root
