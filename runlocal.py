@@ -8,10 +8,9 @@ from clients.moxfield_client import MoxfieldClient
 
 def binders():
 
-    raw = client.get_trade_binders()
-    pvdd(raw)
-    for binder in bindersobj:
-        pvdd(binder)
+    binder_collection = client.get_trade_binders()
+    for binder in binder_collection:
+        print(binder.description)
 
     die('end of runlocal')
 

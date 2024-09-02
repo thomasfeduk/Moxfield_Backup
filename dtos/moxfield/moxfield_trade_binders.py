@@ -1,7 +1,7 @@
-from typing import List
+from __future__ import annotations
+from typing import List, Iterator
 from dtos.base.data_types import StrPopulated, DatetimeIso8601
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel, MyMoxRootModel
-from includes import common
 from includes.common import RestrictedCollection
 
 
@@ -26,7 +26,7 @@ class TradeBindersResponseDto(MyMoxRootModel[List[TradeBinderDto]]):
     pass
 
 
-class TradeBindersCollection(common.RestrictedCollection):
+class TradeBindersCollection(RestrictedCollection):
     def __init__(self, items: list = None):
         super().__init__(items)
 
@@ -34,10 +34,10 @@ class TradeBindersCollection(common.RestrictedCollection):
     def expected_type(self):
         return TradeBinderDto
 
-    def __iter__(self) -> TradeBinderDto:
+    def __iter__(self) -> Iterator[TradeBinderDto]:
         return super().__iter__()
 
-    def __add__(self, value: RestrictedCollection) -> 'TradeBindersCollection':
+    def __add__(self, value: TradeBinderDto | RestrictedCollection) -> TradeBindersCollection:
         return super().__add__(value)
 
     # Override get item so we can typehint the explicit type
