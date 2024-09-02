@@ -1,51 +1,53 @@
 from __future__ import annotations
 import json
 import re
-from abc import abstractmethod
-from typing import Any, Dict, List
+from abc import abstractmethod, ABC
+from typing import Any, Dict, List, Iterator, TypeVar, Generic
 
 
 class InvalidFilenameError(Exception):
     pass
 
 
-class Collection:
-    def __init__(self, items: list | None = None):
+T = TypeVar('T')
+
+
+class Collection(Generic[T]):
+    def __init__(self, items: list[T] | None = None):
         if items is None:
             items = []
         self._current_index = 0
         if not isinstance(items, list):
-            raise TypeError(f'Type "list" is expected. Received:  {type(items)} {repr(items)}')
-        self._items = items
+            raise TypeError(f'Type "list" is expected. Received: {type(items)} {repr(items)}')
+        self._items: list[T] = items
 
-    def __iter__(self) -> Any:
+    def __iter__(self) -> Iterator[T]:
         self._current_index = 0
-        return self
+        return iter(self._items)
 
-    def __next__(self) -> Any:
+    def __next__(self) -> T:
         if self._current_index >= len(self._items):
             raise StopIteration
         self._current_index += 1
         return self._items[self._current_index - 1]
 
-    def __getitem__(self, index) -> Any:
+    def __getitem__(self, index) -> T:
         if isinstance(index, slice):
             start, stop, step = index.indices(len(self._items))
             return [self._items[i] for i in range(start, stop, step)]
         else:
             return self._items[int(index)]
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key, value: T) -> None:
         self._items[key] = value
 
-    def __add__(self, value: list | Collection) -> Collection:
+    def __add__(self, value: list[T] | Collection[T]) -> Collection[T]:
         if isinstance(value, Collection):
             combined = self._items + value._items
         elif isinstance(value, list):
             combined = self._items + value
         else:
             raise TypeError(f"Cannot concatenate '{self.__class__.__name__}' and '{value.__class__.__name__}' objects")
-        # Return a new instance
         return Collection(combined)
 
     def __len__(self) -> int:
@@ -63,60 +65,56 @@ class Collection:
     def __eq__(self, other) -> bool:
         return repr(self) == repr(other)
 
-    def append(self, item) -> None:
+    def append(self, item: T) -> None:
         self._items.append(item)
 
     def toJson(self, *, indent: int | None = None) -> str:
         return json.dumps([json.loads(i.toJson()) for i in self._items], indent=indent)
 
 
-class RestrictedCollection(Collection):
-    @abstractmethod
-    def __init__(self, items: list = None):
+class RestrictedCollection(Collection[T], ABC):
+    def __init__(self, items: list[T] | None = None):
         super().__init__(items)
         for item in self._items:
             self._validate_item(item)
 
-    @abstractmethod
-    def __iter__(self) -> Any:
+    def __iter__(self) -> Iterator[T]:
         super().__iter__()
         return self
 
-    @abstractmethod
-    def __getitem__(self, index) -> Any:
+    def __getitem__(self, index) -> T:
         return super().__getitem__(index)
 
-    @abstractmethod
-    def __next__(self) -> Any:
+    def __next__(self) -> T:
         return super().__next__()
 
-    def append(self, item) -> None:
+    def append(self, item: T) -> None:
         self._validate_item(item)
         self._items.append(item)
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key, value: T) -> None:
         self._validate_item(value)
         self._items[key] = value
 
-    def __add__(self, value: RestrictedCollection) -> Any:
-        # Need to rework this to handle restricted type checking with list support both here
-        # and in the extended class that does proper type checking thats compatible from
-        # both the restricted class and extended class perspective
-        raise NotImplementedError
-
-        # Return a new instance
-        # return RestrictedCollection(list(super().__add__(list(value))))
+    def __add__(self, value: list[T] | RestrictedCollection[T]) -> RestrictedCollection[T]:
+        if isinstance(value, list):
+            combined = self._items + value
+        elif isinstance(value, RestrictedCollection):
+            combined = self._items + value._items
+        else:
+            raise TypeError("Can only add a list of T or RestrictedCollection of T to this collection")
+        return self.__class__(combined)
 
     @property
     @abstractmethod
-    def expected_type(self):
-        return object  # Set your allowed object type here
+    def expected_type(self) -> type:
+        return object
 
-    def _validate_item(self, value):
-        if isinstance(value, self.expected_type):
-            return value
-        raise TypeError(f"Each item in the collection must be of type {repr(self.expected_type)}. Received: "
-                        f"{type(value)} {repr(value)}")
+    def _validate_item(self, value: T) -> T:
+        if not isinstance(value, self.expected_type):
+            raise TypeError(
+                f"Each item in the collection must be of type {repr(self.expected_type)}. Received: {type(value)} {repr(value)}")
+        return value
 
 
 def safe_filename(filename: str) -> str:
