@@ -1,8 +1,11 @@
 import json
 from typing import TypeVar, Type, Generic, Dict, Any
 
+from debug import pvdd
 from includes.logger import get_logger
 from pydantic import BaseModel, ValidationError, RootModel
+
+from includes.utils import is_json_compatible
 
 log = get_logger()
 
@@ -30,9 +33,9 @@ class LoadModel(Generic[T_LoadModel]):
                 raise
 
         # Ensure the input is a dictionary
-        if not isinstance(data, dict):
+        if not isinstance(data, dict) and not is_json_compatible(data):
             log.error("Input data must be a dictionary or a valid JSON string.", exc_info=True)
-            raise TypeError("Input data must be a dictionary or a valid JSON string.")
+            raise TypeError("Input data must be a str, int, float, bool, None, dictionary or a valid JSON string.")
 
         # Validate the input data using Pydantic
         try:

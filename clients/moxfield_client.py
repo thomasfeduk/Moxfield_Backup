@@ -83,10 +83,9 @@ class MoxfieldClient:
             'Cookie': f'refresh_token={self._refresh_token}; logged_in=true'
         }
         headers.update(self.headers)
-        pvdd(headers)
         try:
             response = Requests.request(method, f"{config.MoxFieldAPI.BASE_URL}{endpoint}",
-                                        headers=headers, params=params, json=data, debug=True)
+                                        headers=headers, params=params, json=data)
             response.raise_for_status()
         except Requests.exceptions.HTTPError as e:
             print(f"HTTP error occurred: {e} - Status Code: {response.status_code}")
@@ -94,6 +93,8 @@ class MoxfieldClient:
         except Requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
             raise
+        pvd(response.json())
+        pvdd(JsonDto.load(response.json()))
         return JsonDto.load(response.json())
 
     @classmethod
