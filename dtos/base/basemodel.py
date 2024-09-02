@@ -1,6 +1,8 @@
 import json
 from typing import TypeVar, Type, get_args
 
+from typing_extensions import get_origin
+
 from includes.logger import get_logger
 from pydantic import BaseModel, ValidationError
 
@@ -37,8 +39,11 @@ class MyBaseModel(BaseModel):
         # Ensure the input is a valid JSON-compatible type
         json_types = get_args(JSONType)  # Retrieve the component types from JSONType
 
-        # Check if the data is one of the acceptable types
-        if not any(isinstance(data, t if t is not type(None) else type(None)) for t in json_types):
+        # Ensure the input is a valid JSON-compatible type
+        json_types = get_args(JSONType)  # Retrieve the component types from JSONType
+
+        # Check if the data is one of the acceptable types using origins
+        if not any(isinstance(data, get_origin(t) or t) for t in json_types):
             log.error("Input data must be a valid JSON-compatible type.", exc_info=True)
             raise TypeError("Input data must be a valid JSON-compatible type.")
 

@@ -4,6 +4,8 @@ import sys
 from typing import TypeVar, Type, Generic
 from includes.logger import get_logger, setup_logger
 from pydantic import PrivateAttr, RootModel
+
+from includes.types import JSONType
 from includes.utils import display_friendly_error
 from dtos.base.basemodel import MyBaseModel
 
@@ -39,13 +41,13 @@ class MoxFieldBaseModel(MyBaseModel):
         setup_logger(local_mode=value)
 
 
-T_Root = TypeVar('T_Root')  # For use in the root model
+T_JSONType = TypeVar('T_JSONType', bound=JSONType)
 
 
 # Create a generic root model that extends MoxFieldBaseModel and RootModel
-class MyMoxRootModel(RootModel[T_Root], MoxFieldBaseModel, Generic[T_Root]):
+class MyMoxRootModel(RootModel[T_JSONType], MoxFieldBaseModel, Generic[T_JSONType]):
     @classmethod
-    def load(cls: Type[T_Mox], data) -> T_Mox:
+    def load(cls, data) -> 'MyMoxRootModel':
         """Override load method to include custom error handling logic."""
         cls.set_friendly_errors(os.getenv('FRIENDLY_ERRORS') == '1')
         try:
