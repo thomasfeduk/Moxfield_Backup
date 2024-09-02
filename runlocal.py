@@ -10,7 +10,7 @@ def binders():
 
     binder_collection = client.get_trade_binders()
     for binder in binder_collection:
-        print(binder.description)
+        print(binder.name)
 
     die('end of runlocal')
 
