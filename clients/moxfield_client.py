@@ -1,4 +1,5 @@
 import config
+from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
 from includes.types import JSONType
 from clients.base_client import Requests
 from cerberus import Validator
@@ -65,17 +66,40 @@ class MoxfieldClient:
         self._update_stored_refresh_token(refresh_token_response)
         return UserBaseInfo.load(refresh_token_response)
 
-    # def get_collections(self) -> CollectionsSearchDTO:
-    #     """Fetch collections data and return as DTO."""
-    #     endpoint = "collections"
-    #     response = self._make_request(endpoint)
-    #     return CollectionsSearchDTO(**response)
-
     def get_trade_binders(self) -> TradeBindersCollection:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/trade-binders"
         response = self._make_request(endpoint)
-        # Confirm response validity
+        # Confirm response validity since response is a simple list of TradeBinders
+        TradeBindersResponseDto.load(response)
+        return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
+
+    def collections_search(self) -> TradeBindersCollection:
+        """Fetch collections data and return as DTO."""
+        endpoint = "/v1/collections/search"
+        params = {
+            'q': '',
+            'setId': '',
+            'deckId': '',
+            'rarity': '',
+            'condition': '',
+            'game': '',
+            'cardLanguageId': '',
+            'finish': '',
+            'isAlter': '',
+            'isProxy': '',
+            'tradeBinderId': '',
+            'playStyle': 'paperDollars',
+            'priceMinimum': '',
+            'priceMaximum': '',
+            'pageNumber': '1',
+            'pageSize': '50',
+            'sortType': 'cardName',
+            'sortDirection': 'ascending'
+        }
+        response = self._make_request(endpoint, params=params)
+        pvdd(CollectionSearchResponseDto.load(response))
+        # Confirm response validity since response is a simple list of TradeBinders
         TradeBindersResponseDto.load(response)
         return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
 

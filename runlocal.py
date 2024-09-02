@@ -1,4 +1,4 @@
-from dtos.moxfield.collections_search import CollectionSearchResponseDto
+from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
 import os
 import config
 from debug import *
@@ -8,7 +8,9 @@ from clients.moxfield_client import MoxfieldClient
 
 def binders():
 
-    binder_collection = client.get_trade_binders()
+    # binder_collection = client.get_trade_binders()
+    collection_search = client.collections_search()
+    pvdd(collection_search)
     for binder in binder_collection:
         print(binder.name)
 

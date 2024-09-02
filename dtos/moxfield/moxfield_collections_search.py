@@ -22,10 +22,10 @@ class DataDto(MoxFieldBaseModel):
     isProxy: bool
     isPrefPrinting: bool
     createdAtUtc: DatetimeIso8601
-    lastUpdatedAtUtc: DatetimeIso8601
-    rarity: StrPopulated
-    tradeBinder: TradeBinderDto
-    card: CardDto
+    # lastUpdatedAtUtc: DatetimeIso8601
+    # rarity: StrPopulated
+    # tradeBinder: TradeBinderDto
+    # card: CardDto
 
 
 class CollectionSearchResponseDto(MoxFieldBaseModel):
