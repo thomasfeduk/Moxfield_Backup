@@ -43,15 +43,15 @@ class LegalitiesDto(MoxFieldBaseModel):
 
 
 class CardPricesDto(MoxFieldBaseModel):
-    usd: float
-    eur: float
-    tix: float
-    ck: float
-    lastUpdatedAtUtc: DatetimeIso8601
-    ck_buy: float
-    csi: float
-    csi_buy: float
-    ct: float
+    usd: float = None
+    eur: float = None
+    tix: float = None
+    ck: float = None
+    lastUpdatedAtUtc: DatetimeIso8601 = None
+    ck_buy: float = None
+    csi: float = None
+    csi_buy: float = None
+    ct: float = None
 
 
 class CardDto(MoxFieldBaseModel):
@@ -67,7 +67,7 @@ class CardDto(MoxFieldBaseModel):
     type: StrPopulated
     type_line: StrPopulated
     oracle_text: StrPopulated
-    mana_cost: StrPopulated
+    mana_cost: str
     colors: List[StrPopulated]
     color_indicator: List[StrPopulated]
     color_identity: List[StrPopulated]
@@ -82,7 +82,7 @@ class CardDto(MoxFieldBaseModel):
     rarity: StrPopulated
     border_color: StrPopulated
     colorshifted: bool
-    flavor_text: StrPopulated | None
+    flavor_text: str = None
     lang: StrPopulated
     latest: bool
     has_multiple_editions: bool
@@ -90,23 +90,23 @@ class CardDto(MoxFieldBaseModel):
     prices: CardPricesDto
     artist: StrPopulated
     promo_types: List[StrPopulated]
-    cardHoarderUrl: StrPopulated | None
-    cardKingdomUrl: StrPopulated | None
-    cardMarketUrl: StrPopulated | None
-    tcgPlayerUrl: StrPopulated | None
+    cardHoarderUrl: StrPopulated = None
+    cardKingdomUrl: StrPopulated = None
+    cardMarketUrl: StrPopulated = None
+    tcgPlayerUrl: StrPopulated = None
     isArenaLegal: bool
     released_at: DateYmd
-    edhrec_rank: int | None
-    cardmarket_id: int | None
-    mtgo_id: int | None
-    tcgplayer_id: int | None
-    cardkingdom_id: int | None
+    edhrec_rank: int = None
+    cardmarket_id: int = None
+    mtgo_id: int = None
+    tcgplayer_id: int = None
+    cardkingdom_id: int = None
     reprint: bool
     set_type: StrPopulated
-    coolStuffIncUrl: StrPopulated | None
+    coolStuffIncUrl: StrPopulated = None
     acorn: bool
     image_seq: int
-    cardTraderUrl: StrPopulated | None
+    cardTraderUrl: StrPopulated = None
     content_warning: bool
     isToken: bool
     defaultFinish: FinishesEnum

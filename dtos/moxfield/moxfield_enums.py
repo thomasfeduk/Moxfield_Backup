@@ -2,11 +2,11 @@ from enum import Enum
 
 
 class FinishesEnum(str, Enum):
-    value1 = "foil"
-    value2 = "nonFoil"
-    value3 = "etched"
+    foil = "foil"
+    nonFoil = "nonFoil"
+    etched = "etched"
 
 
 class LegalitiesEnum(str, Enum):
-    value1 = "legal"
-    value2 = "not_legal"
+    legal = "legal"
+    not_legal = "not_legal"

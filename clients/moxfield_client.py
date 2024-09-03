@@ -74,7 +74,7 @@ class MoxfieldClient:
         TradeBindersResponseDto.load(response)
         return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
 
-    def collections_search(self) -> TradeBindersCollection:
+    def collections_search(self) -> CollectionSearchResponseDto:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/collections/search"
         params = {
@@ -98,10 +98,7 @@ class MoxfieldClient:
             'sortDirection': 'ascending'
         }
         response = self._make_request(endpoint, params=params)
-        pvdd(CollectionSearchResponseDto.load(response))
-        # Confirm response validity since response is a simple list of TradeBinders
-        TradeBindersResponseDto.load(response)
-        return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
+        return CollectionSearchResponseDto.load(response)
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
         headers = {

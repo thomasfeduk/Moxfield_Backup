@@ -7,6 +7,8 @@ import copy
 import os
 import sys
 from io import StringIO
+from typing import Any
+
 from var_dump import var_dump, var_export
 import json
 import jsonpickle
@@ -61,7 +63,7 @@ def pvdd(data):
     exit(0)
 
 
-def pvdfile(filename: str, data, *, overwrite: bool = False):
+def pvdfile(filename: str, data: Any, *, overwrite: bool = False):
     directory = "debug"
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -78,9 +80,14 @@ def pvdfile(filename: str, data, *, overwrite: bool = False):
         raise FileExistsError(f'The debug output file "{filename}" already exists.') from ex
 
 
-def pvddfile(filename, data, *, overwrite: bool = False):
+def pvddfile(filename: str, data: Any, *, overwrite: bool = False):
     pvdfile(filename, data, overwrite=overwrite)
     die()
+
+
+def readfile(filename: str) -> str:
+    with open(filename) as file:
+        return file.read()
 
 
 def called_from_where():
@@ -171,7 +178,7 @@ def _strip_proprules_recursively(data):
                 except Exception:
                     data_stripped = data_stripped_new
         except Exception:
-                pass
+            pass
     return data_stripped
 
 
