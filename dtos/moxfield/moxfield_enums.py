@@ -8,5 +8,7 @@ class FinishesEnum(str, Enum):
 
 
 class LegalitiesEnum(str, Enum):
+    restricted = "restricted"
     legal = "legal"
     not_legal = "not_legal"
+

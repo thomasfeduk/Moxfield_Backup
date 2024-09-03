@@ -1,12 +1,12 @@
 import config
-from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
+from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto, TradeBinderDto
 from includes.types import JSONType
 from clients.base_client import Requests
 from cerberus import Validator
 from includes.logger import get_logger
 from debug import *
 
-from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDto
+from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDetailedDto, PersonalCardsCollection, PersonalCardDto
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
 from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection
 
@@ -72,7 +72,7 @@ class MoxfieldClient:
         response = self._make_request(endpoint)
         # Confirm response validity since response is a simple list of TradeBinders
         TradeBindersResponseDto.load(response)
-        return TradeBindersCollection([TradeBinderDto.load(item) for item in response])
+        return TradeBindersCollection([TradeBinderDetailedDto.load(item) for item in response])
 
     def collections_search(self) -> CollectionSearchResponseDto:
         """Fetch collections data and return as DTO."""
@@ -98,8 +98,12 @@ class MoxfieldClient:
             'sortDirection': 'ascending'
         }
         response = self._make_request(endpoint, params=params)
-        pvddfile('tree', response)
         return CollectionSearchResponseDto.load(response)
+
+    def get_binder_cards(self) -> PersonalCardsCollection:
+        """Fetch a list of personal cards from a collection"""
+        collection_search_response = self.collections_search()
+        return PersonalCardsCollection([item for item in collection_search_response.data])
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
         headers = {

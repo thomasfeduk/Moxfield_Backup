@@ -7,6 +7,7 @@ from pydantic import StrictBool
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 from dtos.base.data_types import DatetimeIso8601, StrPopulated, DateYmd
 from dtos.moxfield.moxfield_enums import FinishesEnum, LegalitiesEnum
+from includes.common import RestrictedCollection
 
 
 class UserBaseInfo(MoxFieldBaseModel):
@@ -113,7 +114,14 @@ class CardDto(MoxFieldBaseModel):
     isToken: bool
     defaultFinish: FinishesEnum
 
-class TradeBinderDto(MoxFieldBaseModel):
+
+class TradeBinderSimpledDto(MoxFieldBaseModel):
+    id: StrPopulated
+    name: StrPopulated
+    publicId: StrPopulated
+
+
+class TradeBinderDetailedDto(MoxFieldBaseModel):
     id: StrPopulated
     name: StrPopulated
     description: str
@@ -137,8 +145,14 @@ class PersonalCardDto(MoxFieldBaseModel):
     createdAtUtc: DatetimeIso8601
     lastUpdatedAtUtc: DatetimeIso8601
     rarity: StrPopulated
-    tradeBinder: TradeBinderDto = None
+    tradeBinder: TradeBinderSimpledDto = None
     card: CardDto
+
+
+class PersonalCardsCollection(RestrictedCollection[PersonalCardDto]):
+    @property
+    def expected_type(self) -> type:
+        return PersonalCardDto
 
 
 class CreatedByDto(MoxFieldBaseModel):

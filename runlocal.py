@@ -6,19 +6,19 @@ import os
 import config
 from debug import *
 
+from includes.common import Collection
 from clients.moxfield_client import MoxfieldClient
-from dtos.moxfield.moxfield_shared import CardDto, PersonalCardDto
 
 
-def translate(personal_cards: List[PersonalCardDto]) -> List[Dict[str, any]]:
+def translate(personal_cards: Collection) -> List[Dict[str, any]]:
     """Define the mapping from DTO fields to CSV fields"""
     csv_rows = []
     for personal_card in personal_cards:
         csv_row = {
             "Count": 1,
             "Tradelist Count": 0,
-            "Name": personal_card.card.namename,
-            "Edition": personal_card.card.nameset_name,
+            "Name": personal_card.card.name,
+            "Edition": personal_card.card.set_name,
             "Condition": "NM",
             "Language": personal_card.card.lang,
             "Foil": "Yes" if personal_card.isFoil else "No",
@@ -33,15 +33,13 @@ def translate(personal_cards: List[PersonalCardDto]) -> List[Dict[str, any]]:
 
     return csv_rows
 
+
 def binders():
-
     # binder_collection = client.get_trade_binders()
-    collection_search = client.collections_search()
-    # pvdd(len(collection_search.data))
-
-    # pvdd([item for item in collection_search.data])
-
-    csv_format = translate([item.card for item in collection_search.data])
+    cards = client.get_binder_cards()
+    csv_format = translate(cards)
+    print(csv_format)
+    die()
     pvdd(csv_format)
     for cardRoot in collection_search.data:
         print(cardRoot.card.name)
@@ -53,27 +51,19 @@ if __name__ == "__main__":
     # if config.MoxFieldErrors.FRIENDLY_ERROR_MSG:
     #     os.environ['FRIENDLY_ERRORS'] = '1'
 
-
     with open('refresh_token.dat', 'r') as token_file:
         token = token_file.read()
 
     client = MoxfieldClient(refresh_token=token)
 
-
     binders()
-
-
 
     # moxfield_api = MoxfieldAPI()
     # binders = moxfield_api.get_binders()
     # moxfield_api.write_collection(binders)
     # moxfield_api.get_collection()
 
-
-
-
     die('runlocalpy')
-
 
     with open('dto_refs/collection/response CollectionsSearch.json', 'r') as fidle:
         data = file.read()

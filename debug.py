@@ -142,8 +142,10 @@ def _strip_proprules_recursively(data):
                 del data_stripped[i]._proprules
             except Exception:
                 pass
-
-            setattr(data_stripped, i, _strip_proprules_recursively(getattr(data_stripped, i)))
+            try:
+                setattr(data_stripped, i, _strip_proprules_recursively(getattr(data_stripped, i)))
+            except:
+                pass
 
     if hasattr(data_stripped, '__iter__') and type(data_stripped) not in (
             tuple, int, str, float, long, bool, NoneType, unicode):
