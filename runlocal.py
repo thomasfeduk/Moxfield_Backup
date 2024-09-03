@@ -13,6 +13,7 @@ from clients.moxfield_client import MoxfieldClient
 def translate(personal_cards: Collection) -> List[Dict[str, any]]:
     """Define the mapping from DTO fields to CSV fields"""
     csv_rows = []
+    die(personal_cards.json())
     for personal_card in personal_cards:
         csv_row = {
             "Count": 1,

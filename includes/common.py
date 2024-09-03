@@ -68,8 +68,8 @@ class Collection(Generic[T]):
     def append(self, item: T) -> None:
         self._items.append(item)
 
-    def toJson(self, *, indent: int | None = None) -> str:
-        return json.dumps([json.loads(i.toJson()) for i in self._items], indent=indent)
+    def json(self, *, indent: int | None = None) -> str:
+        return json.dumps([json.loads(i.json()) for i in self._items], indent=indent)
 
 
 class RestrictedCollection(Collection[T], ABC):
