@@ -6,9 +6,9 @@ from cerberus import Validator
 from includes.logger import get_logger
 from debug import *
 
-from dtos.moxfield.moxfield_shared import UserBaseInfo
+from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDto
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
-from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection, TradeBinderDto
+from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection
 
 log = get_logger()
 
@@ -78,7 +78,7 @@ class MoxfieldClient:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/collections/search"
         params = {
-            'q': '',
+            'q': 'treespeak',
             'setId': '',
             'deckId': '',
             'rarity': '',
@@ -98,7 +98,7 @@ class MoxfieldClient:
             'sortDirection': 'ascending'
         }
         response = self._make_request(endpoint, params=params)
-        pvddfile('swamp',response)
+        pvddfile('tree', response)
         return CollectionSearchResponseDto.load(response)
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:

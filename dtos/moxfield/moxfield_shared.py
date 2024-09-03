@@ -1,6 +1,8 @@
-from typing import List, Literal
+from __future__ import annotations
 
-from pydantic import StrictBool, StrictInt
+from typing import List
+
+from pydantic import StrictBool
 
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 from dtos.base.data_types import DatetimeIso8601, StrPopulated, DateYmd
@@ -110,3 +112,36 @@ class CardDto(MoxFieldBaseModel):
     content_warning: bool
     isToken: bool
     defaultFinish: FinishesEnum
+
+class TradeBinderDto(MoxFieldBaseModel):
+    id: StrPopulated
+    name: StrPopulated
+    description: str
+    publicId: StrPopulated
+    visibility: StrPopulated
+    createdAtUtc: DatetimeIso8601
+    lastUpdatedAtUtc: DatetimeIso8601
+    createdBy: CreatedByDto
+
+
+class PersonalCardDto(MoxFieldBaseModel):
+    id: StrPopulated
+    quantity: int
+    condition: StrPopulated
+    game: StrPopulated
+    finish: FinishesEnum
+    isFoil: bool
+    isAlter: bool
+    isProxy: bool
+    isPrefPrinting: bool
+    createdAtUtc: DatetimeIso8601
+    lastUpdatedAtUtc: DatetimeIso8601
+    rarity: StrPopulated
+    tradeBinder: TradeBinderDto = None
+    card: CardDto
+
+
+class CreatedByDto(MoxFieldBaseModel):
+    userName: StrPopulated
+    displayName: StrPopulated
+    badges: List[StrPopulated]

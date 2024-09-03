@@ -7,24 +7,24 @@ import config
 from debug import *
 
 from clients.moxfield_client import MoxfieldClient
-from dtos.moxfield.moxfield_shared import CardDto
+from dtos.moxfield.moxfield_shared import CardDto, PersonalCardDto
 
 
-def translate(card_dtos: List[CardDto]) -> List[Dict[str, any]]:
+def translate(personal_cards: List[PersonalCardDto]) -> List[Dict[str, any]]:
     """Define the mapping from DTO fields to CSV fields"""
     csv_rows = []
-    for card in card_dtos:
+    for personal_card in personal_cards:
         csv_row = {
             "Count": 1,
             "Tradelist Count": 0,
-            "Name": card.name,
-            "Edition": card.set_name,
+            "Name": personal_card.card.namename,
+            "Edition": personal_card.card.nameset_name,
             "Condition": "NM",
-            "Language": card.lang,
-            "Foil": "Yes" if card.foil else "No",
+            "Language": personal_card.card.lang,
+            "Foil": "Yes" if personal_card.isFoil else "No",
             "Tags": "",
             "Last Modified": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "Collector Number": card.cn,
+            "Collector Number": personal_card.card.cn,
             "Alter": "No",
             "Proxy": "No",
             "Purchase Price": 0

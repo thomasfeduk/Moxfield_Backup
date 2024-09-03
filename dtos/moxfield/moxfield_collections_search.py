@@ -1,7 +1,6 @@
 from typing import List
-from dtos.base.data_types import StrPopulated, DatetimeIso8601
-from dtos.moxfield.moxfield_shared import CardDto
-from dtos.moxfield.moxfield_enums import FinishesEnum
+from dtos.base.data_types import StrPopulated
+from dtos.moxfield.moxfield_shared import PersonalCardDto
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 
 
@@ -9,23 +8,6 @@ class TradeBinderDto(MoxFieldBaseModel):
     id: StrPopulated
     publicId: StrPopulated
     name: StrPopulated
-
-
-class DataDto(MoxFieldBaseModel):
-    id: StrPopulated
-    quantity: int
-    condition: StrPopulated
-    game: StrPopulated
-    finish: FinishesEnum
-    isFoil: bool
-    isAlter: bool
-    isProxy: bool
-    isPrefPrinting: bool
-    createdAtUtc: DatetimeIso8601
-    lastUpdatedAtUtc: DatetimeIso8601
-    rarity: StrPopulated
-    tradeBinder: TradeBinderDto = None
-    card: CardDto
 
 
 class CollectionSearchResponseDto(MoxFieldBaseModel):
@@ -39,4 +21,4 @@ class CollectionSearchResponseDto(MoxFieldBaseModel):
     pageSize: int
     totalResults: int
     totalPages: int
-    data: List[DataDto]
+    data: List[PersonalCardDto]
