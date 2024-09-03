@@ -11,23 +11,23 @@ from dtos.moxfield.moxfield_shared import CardDto
 
 
 def translate(card_dtos: List[CardDto]) -> List[Dict[str, any]]:
-    # Define the mapping from DTO fields to CSV fields
+    """Define the mapping from DTO fields to CSV fields"""
     csv_rows = []
     for card in card_dtos:
         csv_row = {
-            "Count": 1,  # Assuming 1 by default, modify as needed
-            "Tradelist Count": 0,  # Assuming 0 by default, modify as needed
+            "Count": 1,
+            "Tradelist Count": 0,
             "Name": card.name,
             "Edition": card.set_name,
-            "Condition": "NM",  # Defaulting to Near Mint (NM), modify as needed
+            "Condition": "NM",
             "Language": card.lang,
             "Foil": "Yes" if card.foil else "No",
-            "Tags": "",  # No tag data in DTO, add logic if available
-            "Last Modified": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # Default to current time
+            "Tags": "",
+            "Last Modified": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "Collector Number": card.cn,
-            "Alter": "No",  # Defaulting to No, modify as needed
-            "Proxy": "No",  # Defaulting to No, modify as needed
-            "Purchase Price": "",  # No purchase price in DTO, add logic if available
+            "Alter": "No",
+            "Proxy": "No",
+            "Purchase Price": 0
         }
         csv_rows.append(csv_row)
 

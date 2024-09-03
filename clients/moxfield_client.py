@@ -98,6 +98,7 @@ class MoxfieldClient:
             'sortDirection': 'ascending'
         }
         response = self._make_request(endpoint, params=params)
+        pvddfile('swamp',response)
         return CollectionSearchResponseDto.load(response)
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
