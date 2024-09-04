@@ -7,7 +7,7 @@ import config
 from debug import *
 
 from includes.common import Collection
-from clients.moxfield_client import MoxfieldClient
+from clients.moxfield_api import MoxfieldClient
 
 
 def translate(personal_cards: Collection) -> List[Dict[str, any]]:
