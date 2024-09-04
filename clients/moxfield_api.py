@@ -1,27 +1,23 @@
 import config
-from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto, TradeBinderDto
+from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
 from includes.types import JSONType
 from clients.base_client import Requests
 from cerberus import Validator
 from includes.logger import get_logger
 from debug import *
 
-from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDetailedDto, PersonalCardsCollection, PersonalCardDto
+from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDetailedDto, PersonalCardsCollection
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
 from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection
 
 log = get_logger()
 
 
-class AuthFailure(Exception):
-    pass
-
-
-class MoxfieldClient:
+class MoxfieldApi:
     def __init__(self, *, refresh_token: str):
         self._access_token = None
         self._refresh_token = self._validate_token(refresh_token)
-        self.headers = {
+        self._headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0',
             'Accept': 'application/json, text/plain, */*',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -37,15 +33,15 @@ class MoxfieldClient:
         }
 
         # Auto authenticate to grab a fresh refresh token when initlizing the client
-        self.authenticate()
+        self._authenticate()
 
-    def authenticate(self) -> UserBaseInfo:
+    def _authenticate(self) -> UserBaseInfo:
         """Refresh the authentication token and update user info."""
         endpoint = "/v1/account/token/refresh"
         headers = {}
         headers.update({'Authorization': 'Bearer undefined'})
         headers.update({'Cookie': f'refresh_token={self._refresh_token}; logged_in=true;'})
-        headers.update(self.headers)
+        headers.update(self._headers)
         payload = json.dumps({
             "ignoreCookie": False
         })
@@ -110,7 +106,7 @@ class MoxfieldClient:
             'Authorization': f'Bearer {self._access_token}',
             'Cookie': f'refresh_token={self._refresh_token}; logged_in=true'
         }
-        headers.update(self.headers)
+        headers.update(self._headers)
         try:
             response = Requests.request(method, f"{config.MoxFieldAPI.BASE_URL}{endpoint}",
                                         headers=headers, params=params, json=data)

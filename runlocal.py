@@ -7,7 +7,7 @@ import config
 from debug import *
 
 from includes.common import Collection
-from clients.moxfield_api import MoxfieldClient
+from clients.moxfield_api import MoxfieldApi
 
 
 def translate(personal_cards: Collection) -> List[Dict[str, any]]:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     with open('refresh_token.dat', 'r') as token_file:
         token = token_file.read()
 
-    client = MoxfieldClient(refresh_token=token)
+    client = MoxfieldApi(refresh_token=token)
 
     binders()
 
