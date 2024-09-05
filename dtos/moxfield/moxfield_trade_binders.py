@@ -9,7 +9,7 @@ class TradeBindersResponseDto(MyMoxRootModel[List[TradeBinderDetailedDto]]):
     pass
 
 
-class TradeBindersCollection(RestrictedCollection[TradeBinderDetailedDto]):
+class CollectionTradeBinders(RestrictedCollection[TradeBinderDetailedDto]):
     @property
     def expected_type(self) -> type:
         return TradeBinderDetailedDto

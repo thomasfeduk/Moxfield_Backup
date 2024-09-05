@@ -149,7 +149,7 @@ class PersonalCardDto(MoxFieldBaseModel):
     card: CardDto
 
 
-class PersonalCardsCollection(RestrictedCollection[PersonalCardDto]):
+class CollectionPersonalCards(RestrictedCollection[PersonalCardDto]):
     @property
     def expected_type(self) -> type:
         return PersonalCardDto

@@ -1,14 +1,14 @@
 import config
 from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
 from includes.types import JSONType
-from clients.base_client import Requests
+from clients.base.base_client import Requests
 from cerberus import Validator
 from includes.logger import get_logger
 from debug import *
 
-from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDetailedDto, PersonalCardsCollection
+from dtos.moxfield.moxfield_shared import UserBaseInfo, TradeBinderDetailedDto, CollectionPersonalCards
 from dtos.moxfield.moxfield_auth import RefreshTokenResponseDto
-from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, TradeBindersCollection
+from dtos.moxfield.moxfield_trade_binders import TradeBindersResponseDto, CollectionTradeBinders
 
 log = get_logger()
 
@@ -62,19 +62,19 @@ class MoxfieldApi:
         self._update_stored_refresh_token(refresh_token_response)
         return UserBaseInfo.load(refresh_token_response)
 
-    def get_trade_binders(self) -> TradeBindersCollection:
+    def get_trade_binders(self) -> CollectionTradeBinders:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/trade-binders"
         response = self._make_request(endpoint)
         # Confirm response validity since response is a simple list of TradeBinders
         TradeBindersResponseDto.load(response)
-        return TradeBindersCollection([TradeBinderDetailedDto.load(item) for item in response])
+        return CollectionTradeBinders([TradeBinderDetailedDto.load(item) for item in response])
 
     def collections_search(self) -> CollectionSearchResponseDto:
         """Fetch collections data and return as DTO."""
         endpoint = "/v1/collections/search"
         params = {
-            'q': 'treespeak',
+            'q': 'tree',
             'setId': '',
             'deckId': '',
             'rarity': '',
@@ -96,10 +96,10 @@ class MoxfieldApi:
         response = self._make_request(endpoint, params=params)
         return CollectionSearchResponseDto.load(response)
 
-    def get_binder_cards(self) -> PersonalCardsCollection:
+    def get_binder_cards(self) -> CollectionPersonalCards:
         """Fetch a list of personal cards from a collection"""
         collection_search_response = self.collections_search()
-        return PersonalCardsCollection([item for item in collection_search_response.data])
+        return CollectionPersonalCards([item for item in collection_search_response.data])
 
     def _make_request(self, endpoint: str, method: str = 'GET', params=None, data=None) -> JSONType:
         headers = {

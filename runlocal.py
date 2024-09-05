@@ -2,12 +2,10 @@ from datetime import datetime
 from typing import List, Dict
 
 from dtos.moxfield.moxfield_collections_search import CollectionSearchResponseDto
-import os
-import config
 from debug import *
 
 from includes.common import Collection
-from clients.moxfield_api import MoxfieldApi
+from clients.moxfield.moxfield_client import MoxfieldClient
 
 
 def translate(personal_cards: Collection) -> List[Dict[str, any]]:
@@ -38,6 +36,7 @@ def translate(personal_cards: Collection) -> List[Dict[str, any]]:
 def binders():
     # binder_collection = client.get_trade_binders()
     cards = client.get_binder_cards()
+    die(cards.json())
     csv_format = translate(cards)
     print(csv_format)
     die()
@@ -52,22 +51,5 @@ if __name__ == "__main__":
     # if config.MoxFieldErrors.FRIENDLY_ERROR_MSG:
     #     os.environ['FRIENDLY_ERRORS'] = '1'
 
-    with open('refresh_token.dat', 'r') as token_file:
-        token = token_file.read()
-
-    client = MoxfieldApi(refresh_token=token)
-
-    binders()
-
-    # moxfield_api = MoxfieldAPI()
-    # binders = moxfield_api.get_binders()
-    # moxfield_api.write_collection(binders)
-    # moxfield_api.get_collection()
-
-    die('runlocalpy')
-
-    with open('dto_refs/collection/response CollectionsSearch.json', 'r') as fidle:
-        data = file.read()
-
-    response = CollectionSearchResponseDto.load(data)
-    print(response.totalPages)
+    client = MoxfieldClient()
+    pvdd(client.get_csv())

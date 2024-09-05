@@ -51,11 +51,13 @@ def joutd(data):
 
 
 def pvd(data):
-    var_dump(_strip_proprules_recursively(data))
+    # var_dump(_strip_proprules_recursively(data))
+    var_dump((data))
 
 
 def pvde(data):
-    return var_export(_strip_proprules_recursively(data))
+    # return var_export(_strip_proprules_recursively(data))
+    return var_export((data))
 
 
 def pvdd(data):
@@ -74,7 +76,7 @@ def pvdfile(filename: str, data: Any, *, overwrite: bool = False):
         mode = "x"
         if overwrite:
             mode = "w"
-        with open(f"{directory}/debug-{filename}.dump", mode) as f:
+        with open(f"{directory}/{filename}.dump", mode) as f:
             f.write(jsonpickle.dumps(data, indent=4, make_refs=False))
     except FileExistsError as ex:
         raise FileExistsError(f'The debug output file "{filename}" already exists.') from ex
