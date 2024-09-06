@@ -1,6 +1,8 @@
 import json
-from typing import TypeVar, Type, get_args, List, Generic
+from collections.abc import Callable
+from typing import TypeVar, Type, get_args, List, Generic, Any
 
+from pydantic.main import IncEx
 from typing_extensions import get_origin
 
 from includes.logger import get_logger
@@ -18,6 +20,28 @@ class MyBaseModel(BaseModel):
     class Config:
         # Enforce strict types for better debugging
         strict_types = True
+        arbitrary_types_allowed = True  # Allow things like Collections/Restricted Collections in properties
+
+    def json(
+        self,
+        *,
+        include: IncEx = None,
+        exclude: IncEx = None,
+        by_alias: bool = False,
+        exclude_unset: bool = False,
+        exclude_defaults: bool = False,
+        exclude_none: bool = False,
+        encoder: Callable[[Any], Any] | None = PydanticUndefined,  # type: ignore[assignment]
+        models_as_dict: bool = PydanticUndefined,  # type: ignore[assignment]
+        **dumps_kwargs: Any,) -> str:
+        return super().model_dump_json(
+            include=include,
+            exclude=exclude,
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_defaults=exclude_defaults,
+            exclude_none=exclude_none,
+        )
 
     @classmethod
     def load(cls: Type[T], data) -> T:

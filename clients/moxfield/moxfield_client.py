@@ -15,11 +15,13 @@ class MoxfieldClient:
         self._api = MoxfieldApi(refresh_token=token)
 
     def get_csv(self) -> List[Dict[str, str | int]]:
+        collection = self.get_collection()
+        die(collection.json())
+        pvdd(collection)
 
-
-        pvdd(collection_pcards)
+        # pvdd(collection_pcards)
 
     def get_collection(self) -> CollectionSet:
         collection_pcards = self._api.get_binder_cards()
-        return CollectionSet()
+        return CollectionSet(username="sadsds", personalCards=collection_pcards)
 
