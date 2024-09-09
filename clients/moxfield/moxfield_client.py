@@ -32,7 +32,7 @@ class MoxfieldClient:
         # result_list = csv_writer.add_row_via_list(example_rows_list)
 
         collection = self.get_collection()
-        csv = collection.get_csv_format(headers=False)
+        csv = collection.get_csv_format()
         pvdd(csv)
         pvdd(collection)
         return

@@ -22,6 +22,10 @@ class MyBaseModel(BaseModel):
         strict_types = True
         arbitrary_types_allowed = True  # Allow things like Collections/Restricted Collections in properties
 
+    def to_list(self) -> List[str | int | float]:
+        # Use model_dump to get all attribute values as a list, keeping DRY
+        return list(self.model_dump().values())
+
     def json(
         self,
         *,

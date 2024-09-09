@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from pydantic import StrictBool
+from pydantic import StrictBool, BaseModel, StrictInt, StrictStr, StrictFloat
 
 from dtos.moxfield.moxfield_basemodel import MoxFieldBaseModel
 from dtos.base.data_types import DatetimeIso8601, StrPopulated, DateYmd
@@ -159,3 +159,19 @@ class CreatedByDto(MoxFieldBaseModel):
     userName: StrPopulated
     displayName: StrPopulated
     badges: List[StrPopulated]
+
+
+class CsvFormatCollectionDTO(MoxFieldBaseModel):
+    Count: StrictInt
+    Tradelist_Count: StrictInt
+    Name: StrictStr
+    Edition: StrictStr
+    Condition: StrictStr
+    Language: StrictStr
+    Foil: StrictStr
+    Tags: StrictStr
+    Last_Modified: StrictStr
+    Collector_Number: StrictStr
+    Alter: StrictStr
+    Proxy: StrictStr
+    Purchase_Price: StrictFloat
