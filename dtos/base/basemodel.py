@@ -14,7 +14,7 @@ log = get_logger()
 
 # Allows preserving autocomplete via the load method return
 T = TypeVar('T', bound='MyBaseModel')
-
+PydanticUndefined = None # Needed to define here for json() override
 
 class MyBaseModel(BaseModel):
     class Config:

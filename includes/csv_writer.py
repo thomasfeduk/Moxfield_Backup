@@ -1,7 +1,13 @@
+import csv
 from typing import List, Dict, Any
-import csv_writer
+from pydantic import BaseModel
 import os
 
+class CSVWriteResult(BaseModel):
+    rows_written: int
+    bytes_written: int
+    total_rows_written: int
+    total_bytes_written: int
 
 class CSVWriter:
     def __init__(self, filename: str, header: List[str]):
@@ -11,13 +17,13 @@ class CSVWriter:
         self._total_bytes_written: int = 0
         self._file = None
 
-        # Check if the file exists
         file_exists = os.path.exists(self._filename)
 
         # If file exists, validate headers, else create a new file
         if file_exists:
             self._validate_existing_file()
             self._file = open(self._filename, mode='a', newline='', encoding='utf-8')
+            self._writer = csv.DictWriter(self._file, fieldnames=self._header)
         else:
             self._file = open(self._filename, mode='w', newline='', encoding='utf-8')
             self._writer = csv.DictWriter(self._file, fieldnames=self._header)
@@ -41,7 +47,7 @@ class CSVWriter:
                     f"Header mismatch: expected {self._header}, found {existing_header} in the existing file."
                 )
 
-    def add_row_via_list(self, rows: List[List[Any]]) -> Dict[str, int]:
+    def add_row_via_list(self, rows: List[List[Any]]) -> CSVWriteResult:
         """
         Add multiple rows via a list of lists to the CSV file.
         """
@@ -51,17 +57,19 @@ class CSVWriter:
                 raise ValueError(f"Row column count mismatch: expected {len(self._header)}, got {len(row)}.")
             self._writer.writerow(dict(zip(self._header, row)))
             rows_written += 1
-        bytes_written = self._file.tell() - self._total_bytes_written
-        self._total_rows_written += rows_written
-        self._total_bytes_written += bytes_written
-        return {
-            'rows_written': rows_written,
-            'bytes_written': bytes_written,
-            'total_rows_written': self._total_rows_written,
-            'total_bytes_written': self._total_bytes_written
-        }
 
-    def add_row_via_listdict(self, rows: List[Dict[str, Any]]) -> Dict[str, int]:
+        new_bytes_written = self._file.tell() - self._total_bytes_written
+        self._total_rows_written += rows_written
+        self._total_bytes_written += new_bytes_written
+
+        return CSVWriteResult(
+            rows_written=rows_written,
+            bytes_written=new_bytes_written,
+            total_rows_written=self._total_rows_written,
+            total_bytes_written=self._total_bytes_written
+        )
+
+    def add_row_via_listdict(self, rows: List[Dict[str, Any]]) -> CSVWriteResult:
         """
         Add multiple rows via a list of dictionaries to the CSV file.
         """
@@ -71,15 +79,17 @@ class CSVWriter:
                 raise ValueError(f"Row column names mismatch: expected {set(self._header)}, got {set(row.keys())}.")
             self._writer.writerow(row)
             rows_written += 1
-        bytes_written = self._file.tell() - self._total_bytes_written
+
+        new_bytes_written = self._file.tell() - self._total_bytes_written
         self._total_rows_written += rows_written
-        self._total_bytes_written += bytes_written
-        return {
-            'rows_written': rows_written,
-            'bytes_written': bytes_written,
-            'total_rows_written': self._total_rows_written,
-            'total_bytes_written': self._total_bytes_written
-        }
+        self._total_bytes_written += new_bytes_written
+
+        return CSVWriteResult(
+            rows_written=rows_written,
+            bytes_written=new_bytes_written,
+            total_rows_written=self._total_rows_written,
+            total_bytes_written=self._total_bytes_written
+        )
 
     def close(self) -> None:
         if self._file and not self._file.closed:
