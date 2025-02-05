@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
 import re
+from enum import Enum
 from abc import abstractmethod, ABC
 from typing import Any, Dict, List, Iterator, TypeVar, Generic
 
@@ -9,9 +10,13 @@ class InvalidFilenameError(Exception):
     pass
 
 
+class MyEnum(Enum):
+    def __str__(self):
+        """Outputs nicely print(EnumClass.property) = 'value'"""
+        return self.value
+
+
 T = TypeVar('T')
-
-
 class Collection(Generic[T]):
     def __init__(self, items: list[T] | None = None):
         if items is None:
@@ -68,8 +73,8 @@ class Collection(Generic[T]):
     def append(self, item: T) -> None:
         self._items.append(item)
 
-    def toJson(self, *, indent: int | None = None) -> str:
-        return json.dumps([json.loads(i.toJson()) for i in self._items], indent=indent)
+    def json(self, *, indent: int | None = None) -> str:
+        return json.dumps([json.loads(i.json()) for i in self._items], indent=indent)
 
 
 class RestrictedCollection(Collection[T], ABC):

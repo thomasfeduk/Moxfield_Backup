@@ -1,5 +1,6 @@
 __pycache__
 .idea
+debug
 MoxfieldBackups
 refresh_token.dat
 errors.log

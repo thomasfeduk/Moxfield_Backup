@@ -1,8 +1,12 @@
+# Quick Ref file only. Check moxfield_api and _client.py for real client
+
+
 import requests
 from debug import *
 import os
 from includes.common import safe_filename
 from datetime import datetime
+
 
 class MoxfieldAPI:
     def __init__(self):
@@ -11,11 +15,11 @@ class MoxfieldAPI:
         self._access_token = None
 
     def _update_refresh_token(self, token: str):
-        with open('refresh_token.dat', 'w') as file:
+        with open('../../refresh_token.dat', 'w') as file:
             file.write(token)
 
     def refresh_token(self) -> str:
-        with open('refresh_token.dat', 'r') as file:
+        with open('../../refresh_token.dat', 'r') as file:
             token = file.read()
         return token
 
@@ -139,4 +143,3 @@ class MoxfieldAPI:
                 card_filename = f'{safe_filename(card)}.card'
                 with open(f'{card_path}/{card_filename}', 'w') as file:
                     file.write('card')
-

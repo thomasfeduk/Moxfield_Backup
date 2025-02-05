@@ -7,6 +7,8 @@ import copy
 import os
 import sys
 from io import StringIO
+from typing import Any
+
 from var_dump import var_dump, var_export
 import json
 import jsonpickle
@@ -49,11 +51,13 @@ def joutd(data):
 
 
 def pvd(data):
-    var_dump(_strip_proprules_recursively(data))
+    # var_dump(_strip_proprules_recursively(data))
+    var_dump((data))
 
 
 def pvde(data):
-    return var_export(_strip_proprules_recursively(data))
+    # return var_export(_strip_proprules_recursively(data))
+    return var_export((data))
 
 
 def pvdd(data):
@@ -61,7 +65,7 @@ def pvdd(data):
     exit(0)
 
 
-def pvdfile(filename: str, data, *, overwrite: bool = False):
+def pvdfile(filename: str, data: Any, *, overwrite: bool = False):
     directory = "debug"
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -72,15 +76,20 @@ def pvdfile(filename: str, data, *, overwrite: bool = False):
         mode = "x"
         if overwrite:
             mode = "w"
-        with open(f"{directory}/debug-{filename}.dump", mode) as f:
+        with open(f"{directory}/{filename}.dump", mode) as f:
             f.write(jsonpickle.dumps(data, indent=4, make_refs=False))
     except FileExistsError as ex:
         raise FileExistsError(f'The debug output file "{filename}" already exists.') from ex
 
 
-def pvddfile(filename, data, *, overwrite: bool = False):
+def pvddfile(filename: str, data: Any, *, overwrite: bool = False):
     pvdfile(filename, data, overwrite=overwrite)
     die()
+
+
+def readfile(filename: str) -> str:
+    with open(filename) as file:
+        return file.read()
 
 
 def called_from_where():
@@ -135,8 +144,10 @@ def _strip_proprules_recursively(data):
                 del data_stripped[i]._proprules
             except Exception:
                 pass
-
-            setattr(data_stripped, i, _strip_proprules_recursively(getattr(data_stripped, i)))
+            try:
+                setattr(data_stripped, i, _strip_proprules_recursively(getattr(data_stripped, i)))
+            except:
+                pass
 
     if hasattr(data_stripped, '__iter__') and type(data_stripped) not in (
             tuple, int, str, float, long, bool, NoneType, unicode):
@@ -171,7 +182,7 @@ def _strip_proprules_recursively(data):
                 except Exception:
                     data_stripped = data_stripped_new
         except Exception:
-                pass
+            pass
     return data_stripped
 
 
